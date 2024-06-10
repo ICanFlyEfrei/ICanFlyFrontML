@@ -1,4 +1,4 @@
-import Logo from "@/assets/IcanFly_Inline.svg"
+import Logo from "../assets/IcanFly_Inline.svg"
 import './HomePage.css'
 
 export const HomePage = ():JSX.Element => {

@@ -1,5 +1,5 @@
-import Logo from "@/assets/IcanFly_Inline.svg"
-import Off from "@/assets/Power-Off-Logo-Transparent.png"
+import Logo from "../../assets/IcanFly_Inline.svg"
+import Off from "../../assets/Power-Off-Logo-Transparent.png"
 import "./Header.css"
 
 export const Header = ():JSX.Element => {
