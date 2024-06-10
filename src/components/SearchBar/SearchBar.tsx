@@ -90,13 +90,13 @@ export const SearchBar = (): JSX.Element => {
             <select name="departure" onChange={onChange}>
                 <option value={undefined} > choisissez un départ</option>
                 {Object.entries(PlaneData.airports).map(([airport, value]) => (
-                        <option value={airport}>{airport}</option>
+                        <option value={value}>{airport}</option>
                     ))}
             </select>
             <select name="destination" onChange={onChange}>
                 <option value={undefined} > choisissez une destination</option>
                 {Object.entries(PlaneData.airports).map(([airport, value]) => (
-                        <option value={airport}>{airport}</option>
+                        <option value={value}>{airport}</option>
                     ))}
             </select>
 
@@ -104,7 +104,7 @@ export const SearchBar = (): JSX.Element => {
             <select name="companies" onChange={onChange}>
                 <option value={undefined} > choisissez une companie</option>
                 {Object.entries(PlaneData.companies).map(([company, value]) => (
-                        <option value={company}>{company}</option>
+                        <option value={value}>{company}</option>
                     ))}
             </select>
 
