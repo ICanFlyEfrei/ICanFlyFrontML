@@ -17,6 +17,7 @@ export const SearchBar = (): JSX.Element => {
     const [selectedCompany, setSelectedCompany] = useState<string>("");
     const [startDate, setStartDate] = useState(new Date());
     const [selectedModel, setSelectedModel] = useState<string>("");
+    const [prediction, setPrediction] = useState<number>(0)
 
     const [options, setOptions] = useState<PlaneOption[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -74,10 +75,10 @@ export const SearchBar = (): JSX.Element => {
         queryParams.append('segmentsEquipmentDescription', selectedModel.length.toString());
 
         console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        axios.post(`http://localhost:5000/predict?${queryParams.toString()}`)
+        axios.get(`http://localhost:5000/predict?${queryParams.toString()}`)
             .then(response => {
                 console.log('Response:', response.data);
-                // Handle response data here
+                setPrediction(response.data.prediction)
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -121,6 +122,8 @@ export const SearchBar = (): JSX.Element => {
             />
 
             <button onClick={handleButtonClick}>Send Data</button>
+
+            <p>Prediction : {prediction}</p>
         </div>
     )
 }
