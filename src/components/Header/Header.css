@@ -1,0 +1,26 @@
+.header {
+    display:flex;
+    flex-direction: row;
+    height: 50px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2%
+}
+
+.offImg {
+    height: 16px;
+    width: 16px;;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+}
+
+.disconnect{
+    align-items: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 30px;
+}
+
