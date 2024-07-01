@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PlaneData from "../../data/companiesDetail.json";
 import { Header } from "../../components/Header/Header";
 import DatePicker from "react-datepicker";

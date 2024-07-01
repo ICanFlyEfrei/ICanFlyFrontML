@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {},
@@ -17,7 +18,8 @@ export default {
     }
   },
   plugins: [
-    require("daisyui")
+    require("daisyui"),
+    require('flowbite/plugin')
   ],
   daisyui: {
     themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
