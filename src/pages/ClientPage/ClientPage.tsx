@@ -41,9 +41,8 @@ export const ClientPage = ():JSX.Element => {
 
     return (
         <>
-            {/* <Header/> */}
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center flex-1 justify-center">
                 <div className="grid grid-cols-3 gap-4 w-3/5">
                     <select name="departure" onChange={onChange} className="select">
                         <option value={undefined} > choisissez un départ</option>
@@ -58,9 +57,11 @@ export const ClientPage = ():JSX.Element => {
                         ))}
                     </select>
 
-                    <DatePicker className="btn" selected={startDate} onChange={(date: Date) => setStartDate(date)} />
-                    <button className="btn col-start-2" onClick={handleButtonClick}>Search Flight</button>
+                    <DatePicker className="select" selected={startDate} onChange={(date: Date) => setStartDate(date)} />
+                    <button className="btn col-start-2 bg-first" onClick={handleButtonClick}>Search Flight</button>
                 </div>
+
+
             </div>
         </>
     )
