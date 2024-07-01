@@ -12,18 +12,16 @@ function App() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setIsLoggedIn((localStorage.getItem("isLoggedIn")==="true"))
-    setType(localStorage.getItem("userType"))
+  // useEffect(() => {
+  //   setIsLoggedIn((localStorage.getItem("isLoggedIn")==="true"))
+  //   setType(localStorage.getItem("userType"))
 
-    if (isLoggedIn && type === "company") {
-      navigate("/head")
-    } else if (isLoggedIn && type === "client"){
-      navigate("/search")
-    } else {
-      navigate("/")
-    }
-  }, [navigate, isLoggedIn, type])
+  //   if (isLoggedIn && type === "company") {
+  //     navigate("/head")
+  //   } else if (isLoggedIn && type === "client"){
+  //     navigate("/search")
+  //   }
+  // }, [navigate, isLoggedIn, type])
 
   return (
     <>
