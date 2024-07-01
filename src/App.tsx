@@ -5,6 +5,7 @@ import { Routes, Route, useNavigate } from "react-router-dom"
 import { HomePage } from './pages/HomePage/HomePage'
 import { useEffect, useState } from 'react'
 import { LoginPage } from './pages/Login/LoginPage'
+import { ClientPage } from './pages/ClientPage/ClientPage'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
@@ -30,6 +31,7 @@ function App() {
           <Route path="/head" element={<Header />}/>
           <Route path="/search" element={<SearchBar />}/>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/find" element={<ClientPage />} />
         </Routes>
     </>
   )
