@@ -20,13 +20,14 @@ export const LoginPage = () => {
 
     return (
         <>
-            <button onClick={handleLoginChoose}>Log In</button>
+
+            <button className="btn" onClick={handleLoginChoose}>Log In</button>
             <button onClick={handleRegisterChoose}>Register</button>
 
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>email :</label>
-                    <input type="text" name="username" required/>
+                    <input type="text" name="username" className="btn btn-info" required/>
                 </div>
                 <div>
                     <label>Password :</label>

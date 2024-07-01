@@ -8,8 +8,8 @@ export const HomePage = ():JSX.Element => {
         <>
             <img className="logo" src={Logo} alt="logo" />
             <div className="ButtonGroup">
-                <button>Connexion</button>
-                <button>Inscription</button>
+                <button className="btn">Connexion</button>
+                <button className="btn">Inscription</button>
             </div>
 
         </>
