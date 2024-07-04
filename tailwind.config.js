@@ -14,6 +14,15 @@ export default {
       "fifth": "#EBE9E1",
       "white": "#FFFFFF",
       "black": "#000000",
+      "primary": {
+        100: "#E43D12",
+        200: "#D6536D",
+        300: "#FFA2b6",
+        400: "#EFB11D",
+        500: "#EBE9E1",
+        600: "#FFFFFF",
+        700: "#000000",
+      },
     }
   },
   plugins: [

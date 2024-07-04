@@ -2,8 +2,29 @@ import { useState } from "react";
 import PlaneData from "../../data/companiesDetail.json";
 import { Header } from "../../components/Header/Header";
 import DatePicker from "react-datepicker";
+import { PlaneCard } from "../../model/card.model";
+import  FlightCard from "../../components/FlightCard/fligthCard"
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios"
+
+// Function to generate fake data
+function generateFakePlaneCard(): PlaneCard {
+    const planeCard: PlaneCard = {
+        id: 1,
+        airline: "Air France",
+        departureDate: new Date('2024-07-01T10:00:00Z'),
+        arrivalDate: new Date('2024-07-01T14:00:00Z'),
+        departure: "New York",
+        arrival: "Paris",
+        destination: "France",
+        price: 500
+    };
+
+    return planeCard;
+}
+
+// Generate an example PlaneCard
+const fakePlaneCard: PlaneCard = generateFakePlaneCard();
 
 export const ClientPage = ():JSX.Element => {
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
@@ -60,8 +81,7 @@ export const ClientPage = ():JSX.Element => {
                     <DatePicker className="select" selected={startDate} onChange={(date: Date) => setStartDate(date)} />
                     <button className="btn col-start-2 bg-first" onClick={handleButtonClick}>Search Flight</button>
                 </div>
-
-
+            <FlightCard flight={fakePlaneCard} />
             </div>
         </>
     )
