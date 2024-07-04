@@ -63,8 +63,8 @@ export const ClientPage = ():JSX.Element => {
     return (
         <>
 
-            <div className="flex flex-col items-center flex-1 justify-center">
-                <div className="grid grid-cols-3 gap-4 w-3/5">
+            <div className="flex flex-col items-center flex-1 justify-center ">
+                <div className="grid grid-cols-3 gap-4 w-3/5  rounded-lg p-10 mb-9">
                     <select name="departure" onChange={onChange} className="select">
                         <option value={undefined} > choisissez un départ</option>
                         {Object.entries(PlaneData.airports).map(([airport, value]) => (
