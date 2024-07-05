@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { PlaneCardUpdate } from "../../model/cardUpdate.model";
-import { FlightCardUpdate} from "../../components/FlightCard/FlightCardUpdate"
+import { CardUpdate } from '../../components/FlightCard/CardUpdate'
 import PlaneData from "../../data/companiesDetail.json";
-import DatePicker from "react-datepicker"   ;
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
 import axios from 'axios'
@@ -16,7 +16,7 @@ interface PlaneOption {
 function generateFakePlaneCard(): PlaneCardUpdate {
     const planeCard: PlaneCardUpdate = {
         id: 1,
-        airline: "Air France",
+        airline: "Delta",
         departureDate: new Date('2024-07-01T10:00:00Z'),
         arrivalDate: new Date('2024-07-01T14:00:00Z'),
         departure: "New York",
@@ -33,7 +33,7 @@ function generateFakePlaneCard(): PlaneCardUpdate {
 const fakePlaneCard: PlaneCardUpdate = generateFakePlaneCard();
 
 
-export const UpdatePage = ():JSX.Element => {
+export const UpdatePage = (): JSX.Element => {
 
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
@@ -60,7 +60,7 @@ export const UpdatePage = ():JSX.Element => {
         } else if (name === "destination") {
             setSelectedDestination(value);
             console.log("Selected Destination:", value);
-        } else if (name === "companies"){
+        } else if (name === "companies") {
             setSelectedCompany(value)
             console.log("Selected Company:", value);
         }
@@ -96,7 +96,7 @@ export const UpdatePage = ():JSX.Element => {
     };
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         setStartTime(value)
         console.log("Start time setted to :", value)
     }
@@ -154,7 +154,7 @@ export const UpdatePage = ():JSX.Element => {
                 onChange={handleChange}
                 inputValue={inputValue}
                 placeholder="Search for a plane model"
-                className= "rounded-md w-3/4 mb-5"
+                className="rounded-md w-3/4 mb-5"
             />
 
             <div className="pl-11 mb-5">
@@ -166,7 +166,7 @@ export const UpdatePage = ():JSX.Element => {
                             <div className="relative">
                                 <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                     <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
                                 <input onChange={handleDateChange} type="time" name="start-time" className="select  border leading-none text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
@@ -176,7 +176,9 @@ export const UpdatePage = ():JSX.Element => {
                 </div>
             </div>
             <button className="btn mr-16 bg-first w-1/6" onClick={handleButtonClick}>Send Data</button>
-            <FlightCardUpdate flight={fakePlaneCard} />
+            <div className="w-full">
+                <CardUpdate flight={fakePlaneCard} />
+            </div>
         </div>
     );
 };
