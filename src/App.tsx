@@ -1,6 +1,7 @@
 import './App.css'
 import { Header } from './components/Header/Header'
 import { SearchBar } from './components/SearchBar/SearchBar'
+import { UpdatePage } from './pages/UpdatePage/UpdatePage'
 import { Routes, Route, useNavigate } from "react-router-dom"
 import { HomePage } from './pages/HomePage/HomePage'
 import { Navbar } from './components/NavBar/Navbar'
@@ -34,6 +35,7 @@ function App() {
           <Route path="/search" element={<SearchBar />}/>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/find" element={<ClientPage />} />
+          <Route path="/update" element={<UpdatePage />} />
         </Routes>
     </div>
   )

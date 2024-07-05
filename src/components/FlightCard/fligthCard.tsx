@@ -1,11 +1,10 @@
-import React from 'react';
 import { PlaneCard } from '../../model/card.model'; // Import the plane card model
 
 interface FlightCardProps {
     flight: PlaneCard; // Define the flight prop with the PlaneCardModel type
 }
 
-const FlightCard: React.FC<FlightCardProps> = ({ flight }) => {
+const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
     return (
         <>
             <div className="card w-full flex items-center">
