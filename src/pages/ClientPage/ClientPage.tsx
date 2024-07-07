@@ -1,6 +1,5 @@
 import { useState } from "react";
 import PlaneData from "../../data/companiesDetail.json";
-import { Header } from "../../components/Header/Header";
 import DatePicker from "react-datepicker";
 import { PlaneCard } from "../../model/card.model";
 import  FlightCard from "../../components/FlightCard/fligthCard"
@@ -43,21 +42,18 @@ export const ClientPage = ():JSX.Element => {
     };
 
     const handleButtonClick = () => {
-        const queryParams = new URLSearchParams();
-        queryParams.append('weekday', startDate.getDay().toString());
-        queryParams.append('startingAirport', selectedDeparture);
-        queryParams.append('destinationAirport', selectedDestination);
-
-
-        alert('send to the right endopoint')
-        // console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        // axios.get(`http://localhost:5000/predict?${queryParams.toString()}`)
-        //     .then(response => {
-        //         console.log('Response:', response.data);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //     });
+        const queryBody = {
+            startingAirport: selectedDeparture,
+            destinationAirport: selectedDestination,
+            departureDate: startDate,
+        }
+        axios.get('https://icanfly.cybonix.fr/api/flight/find', {params: queryBody})
+            .then(response => {
+                console.log(response.data)
+            }).catch(error => {
+                console.error(error)
+            }
+        )
     };
 
     return (

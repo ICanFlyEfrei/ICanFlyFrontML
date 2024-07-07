@@ -106,7 +106,7 @@ export const LoginPage = () => {
                         <>
                             <div>
                                 <label className="label">
-                                    <span className="text-base label-text text-fifth">Password</span>
+                                    <span className="text-base label-text text-fifth">Firstname</span>
                                 </label>
                                 <input
                                     name="firstname"
@@ -119,7 +119,7 @@ export const LoginPage = () => {
                             </div>
                             <div>
                                 <label className="label">
-                                    <span className="text-base label-text text-fifth">Password</span>
+                                    <span className="text-base label-text text-fifth">Lastname</span>
                                 </label>
                                 <input
                                     name="lastname"
@@ -132,7 +132,7 @@ export const LoginPage = () => {
                             </div>
                             <div>
                                 <label className="label">
-                                    <span className="text-base label-text text-fifth">Password</span>
+                                    <span className="text-base label-text text-fifth">Phone Number</span>
                                 </label>
                                 <input
                                     name="phoneNumber"

@@ -5,6 +5,8 @@ interface FlightCardProps {
 }
 
 const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
+
+
     return (
         <>
             <div className="card w-full flex items-center">
