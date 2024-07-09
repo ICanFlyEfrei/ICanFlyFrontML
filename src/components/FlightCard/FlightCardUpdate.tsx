@@ -106,7 +106,7 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                                  ))}
                              </select>
                         ) : (
-                            <h2 className="card-title text-3xl text-fifth font-bold">{flight.airline}</h2>
+                            <h2 className="card-title text-3xl text-fifth font-bold">{flight.segmentAirlineName}</h2>
                         )}
                         {isEditing ? (
                                     <Select
@@ -119,7 +119,7 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                                     className= "rounded-md w-3/4 mb-5"
                                 />
                         ) : (
-                            <h2 className="card-title text-xl text-left mr-8 text-black font-bold">{flight.modelName}</h2>
+                            <h2 className="card-title text-xl text-left mr-8 text-black font-bold">{flight.segmentEquipmentDescription}</h2>
                         )}
                     </div>
                     <div className='grid grid-cols-3 grid-rows-2'>
@@ -145,8 +145,8 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                                 </>
                             ) : (
                                 <>
-                                    <p className='sm:text-2xl text-sm text-black font-bold'>{flight.departureDate.getDate()}/{flight.departureDate.getMonth()}/{flight.departureDate.getFullYear()}</p>
-                                    <p className="sm:text-2xl text-sm text-black font-bold">{flight.departureDate.getHours()} : { (flight.departureDate.getMinutes() < 10 ? '0' : '') + flight.departureDate.getMinutes() } : {(flight.departureDate.getSeconds() < 10 ? '0' : '') + flight.departureDate.getSeconds()}</p>
+                                    <p className='sm:text-2xl text-sm text-black font-bold'>{flight.departureTime.getDate()}/{flight.departureTime.getMonth()}/{flight.departureTime.getFullYear()}</p>
+                                    <p className="sm:text-2xl text-sm text-black font-bold">{flight.departureTime.getHours()} : { (flight.departureTime.getMinutes() < 10 ? '0' : '') + flight.departureTime.getMinutes() } : {(flight.departureTime.getSeconds() < 10 ? '0' : '') + flight.departureTime.getSeconds()}</p>
                                 </>
                             )}
                             {isEditing ? (
@@ -157,7 +157,7 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                                   ))}
                               </select>
                             ) : (
-                                <p className="sm:text-2xl text-sm text-black font-bold">{flight.departure}</p>
+                                <p className="sm:text-2xl text-sm text-black font-bold">{flight.destinationAirport}</p>
                             )}
                         </div>
                         <div className='sm:row-span-2 row-start-2 sm:col-span-1'>
@@ -182,8 +182,8 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                                 </>
                             ) : (
                                 <>
-                                    <p className='sm:text-2xl text-sm text-black font-bold'>{flight.arrivalDate.getDate()}/{flight.arrivalDate.getMonth()}/{flight.arrivalDate.getFullYear()}</p>
-                                    <p className="sm:text-2xl text-sm text-black font-bold">{flight.arrivalDate.getHours()} : {(flight.arrivalDate.getMinutes() < 10 ? '0' : '') + flight.arrivalDate.getMinutes() } : {(flight.arrivalDate.getSeconds() <  10 ? '0' : '') + flight.arrivalDate.getSeconds()} </p>
+                                    <p className='sm:text-2xl text-sm text-black font-bold'>{flight.arrivalTime.getDate()}/{flight.arrivalTime.getMonth()}/{flight.arrivalTime.getFullYear()}</p>
+                                    <p className="sm:text-2xl text-sm text-black font-bold">{flight.arrivalTime.getHours()} : {(flight.arrivalTime.getMinutes() < 10 ? '0' : '') + flight.arrivalTime.getMinutes() } : {(flight.arrivalTime.getSeconds() <  10 ? '0' : '') + flight.arrivalTime.getSeconds()} </p>
                                 </>
                             )}
                             {isEditing ? (
@@ -194,7 +194,7 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                                     ))}
                                 </select>
                             ) : (
-                                <p className="sm:text-2xl text-sm text-black font-bold">{flight.arrival}</p>
+                                <p className="sm:text-2xl text-sm text-black font-bold">{flight.destinationAirport}</p>
                             )}
                         </div>
                         <div className='justify-center items-center flex sm:row-span-1 row-start-3 col-span-1'>

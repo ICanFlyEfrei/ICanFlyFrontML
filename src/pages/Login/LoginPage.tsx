@@ -41,9 +41,9 @@ export const LoginPage = () => {
         const userLastname = lastname || "Doe";
         const userPhoneNumber = phoneNumber || "+33 6 00 00 00 00";
 
-        console.log("try to register with:", { mail, password, userFirstname, userLastname, userPhoneNumber });
         event.preventDefault();
         if (registerForm) {
+            console.log("try to register with:", { mail, password, userFirstname, userLastname, userPhoneNumber });
             axios.post(`https://icanfly.cybonix.fr/api/user/client`,{
                 email:mail,
                 password,
@@ -56,13 +56,14 @@ export const LoginPage = () => {
                 console.error('Error', error);
             })
         } else {
-            console.log("try to login with:", { mail, password });
+            console.log("try to login with:", { email:mail, password });
             axios.post(`https://icanfly.cybonix.fr/api/auth/login`, {
-                email:mail, password
-            }).then(response => (
+                email:mail, password:password
+            }).then(response => {
                 console.log('Response', response.data)
-            )).catch(error => {
-                console.log("Error", error)
+                localStorage.setItem('accessToken', response.data.access_token)
+            }).catch(error => {
+                console.error("Error", error)
             })
         }
     }

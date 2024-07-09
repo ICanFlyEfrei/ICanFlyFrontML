@@ -30,21 +30,25 @@ export const SearchBar = (): JSX.Element => {
     const [startTime, setStartTime] = useState(new String());
     const [endTime, setEndTime] = useState(new String());
 
-    const [prediction, setPrediction] = useState<number>(0)
+    const [pricePrediction, setPricePrediction] = useState<number>(0)
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        const valueAsNumber = Number(value);
         if (name === "departure") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDeparture(value);
-            setSelectedDepartureName(name)
+            setSelectedDepartureName(airportname)
             console.log("Selected Departure:", value);
         } else if (name === "destination") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDestination(value);
-            setSelectedDestinationName
+            setSelectedDestinationName(airportname)
             console.log("Selected Destination:", value);
         } else if (name === "companies"){
+            const companyname = Object.entries(PlaneData.companies).find(([company, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedCompany(value)
-            setSelectedCompanyName(value)
+            setSelectedCompanyName(companyname)
             console.log("Selected Company:", value);
         }
     };
@@ -104,7 +108,7 @@ export const SearchBar = (): JSX.Element => {
         axios.get(`http://icanfly.cybonix.fr/api/price-model-api/predict?${queryParams.toString()}`)
             .then(response => {
                 console.log('Response:', response.data);
-                setPrediction(response.data.prediction)
+                setPricePrediction(response.data.prediction)
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -113,21 +117,26 @@ export const SearchBar = (): JSX.Element => {
     };
 
     const handleSendClick = () => {
-        //implement function here
-        console.log("send data")
         const departureDateTimeStr = `${startDate.toISOString().split('T')[0]}T${startTime}:00.000Z`;
         const arrivalDateTimeStr = `${endDate.toISOString().split('T')[0]}T${endTime}:00.000Z`;
 
         const flightDetail =  {
             startingAirport: selectedDepartureName,
-            destinationAirport: selectedDepartureName,
+            destinationAirport: selectedDestinationName,
             segmentAirlineName: selectedCompanyName,
-            segmentEquipmentDescription: selectedModel,
+            segmentEquipmentDescription: selectedModelName,
             departureTime: departureDateTimeStr,
-            arrivalTime: arrivalDateTimeStr
+            arrivalTime: arrivalDateTimeStr,
+            price: pricePrediction
         }
         console.log(flightDetail)
         axios.post('http://icanfly.cybonix.fr/api/flight/createFlight', flightDetail)
+            .then(response => {
+                console.log(response)
+            }).catch(error => {
+                console.error(error)
+            })
+
     }
 
     return (
@@ -208,8 +217,8 @@ export const SearchBar = (): JSX.Element => {
                     className="input mr-16 mb-5"
                     type="number"
                     name="prediction"
-                    value={Number(prediction)}
-                    onChange={(e) => setPrediction(Number(e.target.value))}
+                    value={Number(pricePrediction)}
+                    onChange={(e) => setPricePrediction(Number(e.target.value))}
                 />
                 <button className="btn bg-first mr-10" onClick={handleSendClick}>Create flight</button>
             </div>

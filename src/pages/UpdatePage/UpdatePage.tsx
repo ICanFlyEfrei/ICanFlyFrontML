@@ -15,15 +15,17 @@ interface PlaneOption {
 
 function generateFakePlaneCard(): PlaneCardUpdate {
     const planeCard: PlaneCardUpdate = {
-        id: 1,
-        airline: "Air France",
-        departureDate: new Date('2024-07-01T10:00:00Z'),
-        arrivalDate: new Date('2024-07-01T14:00:00Z'),
-        departure: "New York",
-        arrival: "Paris",
-        destination: "France",
+        flightNumber: "1",
+        segmentAirlineName: "Air France",
+        departureTime: new Date('2024-07-01T10:00:00Z'),
+        arrivalTime: new Date('2024-07-01T14:00:00Z'),
+        startingAirport: "New York",
+        destinationAirport: "Paris",
         price: 500,
-        modelName: "Boeing 747"
+        segmentEquipmentDescription: "Boeing 747",
+        numberOfSeats: 250,
+        status: "Schedulled"
+
     };
 
     return planeCard;

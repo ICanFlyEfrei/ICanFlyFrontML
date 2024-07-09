@@ -9,13 +9,15 @@ import axios from "axios"
 // Function to generate fake data
 function generateFakePlaneCard(): PlaneCard {
     const planeCard: PlaneCard = {
-        id: 1,
-        airline: "Air France",
-        departureDate: new Date('2024-07-01T10:00:00Z'),
-        arrivalDate: new Date('2024-07-01T14:00:00Z'),
-        departure: "New York",
-        arrival: "Paris",
-        destination: "France",
+        flightNumber: "1",
+        segmentAirlineName: "Air France",
+        departureTime: new Date('2024-07-01T10:00:00Z'),
+        arrivalTime: new Date('2024-07-01T14:00:00Z'),
+        startingAirport: "New York",
+        destinationAirport: "Paris",
+        segmentEquipmentDescription: "Airbus A380",
+        numberOfSeats:300,
+        status: "Schedulled",
         price: 500
     };
 
@@ -58,7 +60,6 @@ export const ClientPage = ():JSX.Element => {
 
     return (
         <>
-
             <div className="flex flex-col items-center flex-1 justify-center ">
                 <div className="grid grid-cols-3 gap-4 w-3/5 é rounded-lg p-10 mb-9">
                     <select name="departure" onChange={onChange} className="select">
