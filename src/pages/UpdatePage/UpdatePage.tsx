@@ -39,20 +39,10 @@ export const UpdatePage = ():JSX.Element => {
 
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
-    const [selectedCompany, setSelectedCompany] = useState<string>("");
-
-    const [selectedModel, setSelectedModel] = useState<string>("");
-    const [options, setOptions] = useState<PlaneOption[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [inputValue, setInputValue] = useState<string>('');
 
     const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
     const [startTime, setStartTime] = useState(new String());
-    const [endTime, setEndTime] = useState(new String());
-
-
-    const [prediction, setPrediction] = useState<number>(0)
+    const [flight, setFlight] = useState<PlaneCardUpdate>();
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -62,67 +52,31 @@ export const UpdatePage = ():JSX.Element => {
         } else if (name === "destination") {
             setSelectedDestination(value);
             console.log("Selected Destination:", value);
-        } else if (name === "companies"){
-            setSelectedCompany(value)
-            console.log("Selected Company:", value);
         }
-    };
-
-    const filterOptions = async (inputValue: string): Promise<PlaneOption[]> => {
-        const planes = PlaneData.planes;
-        const filteredOptions: PlaneOption[] = Object.keys(planes)
-            .filter(plane => plane.toLowerCase().includes(inputValue.toLowerCase()))
-            .map(plane => ({
-                value: plane,
-                label: plane
-            }));
-        return filteredOptions;
-    };
-
-    const handleChange = (selectedOption: PlaneOption | null) => {
-        if (selectedOption) {
-            setSelectedModel(selectedOption.value);
-        }
-    };
-
-    const handleInputChange = (inputValue: string) => {
-        setInputValue(inputValue);
-        loadOptions(inputValue);
-    };
-
-    const loadOptions = async (inputValue: string) => {
-        setLoading(true);
-        const filteredOptions = await filterOptions(inputValue);
-        setOptions(filteredOptions);
-        setLoading(false);
     };
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
-        setStartTime(value)
-        console.log("Start time setted to :", value)
+        setStartTime(event.target.value)
+        console.log("Start time setted to :", event.target.value)
     }
 
     const handleButtonClick = () => {
-        //implement new call to endpoint here
+        startDate.setHours(Number(startTime.substr(0,2)))
+        startDate.setMinutes(Number(startTime.substr(3,2)))
 
-        // const queryParams = new URLSearchParams();
-        // queryParams.append('weekday', startDate.getDay().toString());
-        // queryParams.append('startingAirport', selectedDeparture);
-        // queryParams.append('destinationAirport', selectedDestination);
-        // queryParams.append('segmentsAirlineName', selectedCompany);
-        // queryParams.append('segmentsEquipmentDescription', selectedModel.length.toString());
-
-        // console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        // axios.get(`http://localhost:5000/predict?${queryParams.toString()}`)
-        //     .then(response => {
-        //         console.log('Response:', response.data);
-        //         setPrediction(response.data.prediction)
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         // Handle error here
-        //     });
+        const queryBody = {
+            startingAirport: selectedDeparture,
+            destinationAirport: selectedDestination,
+            departureDate: startDate,
+        }
+        axios.get(`https://${import.meta.env.VITE_SERVER}/api/flight/find`, {params: queryBody})
+            .then(response => {
+                console.log(response.data)
+                // setFlight(response.data)
+            }).catch(error => {
+                console.error(error)
+            }
+        )
     };
 
 
@@ -141,23 +95,7 @@ export const UpdatePage = ():JSX.Element => {
                         <option value={value}>{airport}</option>
                     ))}
                 </select>
-                <select className="select" name="companies" onChange={onChange}>
-                    <option value={undefined} > choisissez une companie</option>
-                    {Object.entries(PlaneData.companies).map(([company, value]) => (
-                        <option value={value}>{company}</option>
-                    ))}
-                </select>
             </div>
-
-            <Select
-                options={options}
-                isLoading={loading}
-                onInputChange={handleInputChange}
-                onChange={handleChange}
-                inputValue={inputValue}
-                placeholder="Search for a plane model"
-                className= "rounded-md w-3/4 mb-5"
-            />
 
             <div className="pl-11 mb-5">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Departure Date:</label>

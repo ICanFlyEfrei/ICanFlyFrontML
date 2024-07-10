@@ -4,7 +4,7 @@ import PlaneData from "../../data/companiesDetail.json";
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import axios from 'axios';
 
 
 interface FlightCardProps {
@@ -91,6 +91,34 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
             setEndTime(value)
             console.log("Ebd time setted to", value)
         }
+    }
+
+    const HandleSaveButton = () => {
+        startDate.setHours(Number(startTime.substr(0,2)))
+        startDate.setMinutes(Number(startTime.substr(3,2)))
+
+        endDate.setHours(Number(endTime.substr(0,2)))
+        endDate.setMinutes(Number(endTime.substr(3,2)))
+
+        const updatedFlight: PlaneCardUpdate = {
+            flightNumber: flight.flightNumber,
+            departureTime: startDate,
+            arrivalTime: endDate,
+            startingAirport: selectedDeparture,
+            destinationAirport: selectedDestination,
+            segmentAirlineName: selectedCompany,
+            segmentEquipmentDescription: selectedModel,
+            numberOfSeats: 150,
+            price : flight.price,
+            status: flight.status
+        }
+
+        axios.patch(`http://${import.meta.env.VITE_SERVER}/api/flight/update`, updatedFlight)
+            .then(response => {
+                console.log("response", response)
+            }).catch(error => {
+                console.error(error)
+            })
     }
 
     return (

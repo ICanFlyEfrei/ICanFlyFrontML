@@ -22,7 +22,7 @@ const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
 
     useEffect(() => {
         if (jwtUserData?.userId) {
-            axios.get(`http://icanfly.cybonix.fr/api/user/find/${jwtUserData?.userId}`)
+            axios.get(`http://${import.meta.env.VITE_SERVER}/api/user/find/${jwtUserData?.userId}`)
             .then(response => {
                 console.log('Response', response)
                 setUserData(response.data)

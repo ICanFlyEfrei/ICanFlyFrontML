@@ -89,6 +89,7 @@ export const SearchBar = (): JSX.Element => {
         if (name === "start-time"){
             setStartTime(value)
             console.log("Start time setted to :", value)
+            console.log("hours", (Number(value.substr(3,2))))
         }
         else if (name === "end-time"){
             setEndTime(value)
@@ -105,7 +106,7 @@ export const SearchBar = (): JSX.Element => {
         queryParams.append('segmentsEquipmentDescription', selectedModel.length.toString());
 
         console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        axios.get(`http://icanfly.cybonix.fr/api/price-model-api/predict?${queryParams.toString()}`)
+        axios.get(`http://${import.meta.env.VITE_SERVER}/api/price-model-api/predict?${queryParams.toString()}`)
             .then(response => {
                 console.log('Response:', response.data);
                 setPricePrediction(response.data.prediction)
@@ -117,20 +118,23 @@ export const SearchBar = (): JSX.Element => {
     };
 
     const handleSendClick = () => {
-        const departureDateTimeStr = `${startDate.toISOString().split('T')[0]}T${startTime}:00.000Z`;
-        const arrivalDateTimeStr = `${endDate.toISOString().split('T')[0]}T${endTime}:00.000Z`;
+        startDate.setHours(Number(startTime.substr(0,2)))
+        startDate.setMinutes(Number(startTime.substr(3,2)))
+
+        endDate.setHours(Number(endTime.substr(0,2)))
+        endDate.setMinutes(Number(endTime.substr(3,2)))
 
         const flightDetail =  {
             startingAirport: selectedDepartureName,
             destinationAirport: selectedDestinationName,
             segmentAirlineName: selectedCompanyName,
             segmentEquipmentDescription: selectedModelName,
-            departureTime: departureDateTimeStr,
-            arrivalTime: arrivalDateTimeStr,
+            departureTime: startDate,
+            arrivalTime: endDate,
             price: pricePrediction
         }
         console.log(flightDetail)
-        axios.post('http://icanfly.cybonix.fr/api/flight/createFlight', flightDetail)
+        axios.post(`http://${import.meta.env.VITE_SERVER}/api/flight/createFlight`, flightDetail)
             .then(response => {
                 console.log(response)
             }).catch(error => {

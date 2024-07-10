@@ -49,7 +49,7 @@ export const ClientPage = ():JSX.Element => {
             destinationAirport: selectedDestination,
             departureDate: startDate,
         }
-        axios.get('https://icanfly.cybonix.fr/api/flight/find', {params: queryBody})
+        axios.get(`https://${import.meta.env.VITE_SERVER}/api/flight/find`, {params: queryBody})
             .then(response => {
                 console.log(response.data)
             }).catch(error => {

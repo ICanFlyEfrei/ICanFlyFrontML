@@ -4,9 +4,9 @@ export interface PlaneCardUpdate {
     arrivalTime: Date,
     startingAirport: string,
     destinationAirport: string,
-    segmentAirlineName: string
+    segmentAirlineName: string,
     segmentEquipmentDescription: string,
     numberOfSeats: number,
-    status: string
     price : number;
+    status: string
 }
