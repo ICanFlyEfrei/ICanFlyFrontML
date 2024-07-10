@@ -1,11 +1,11 @@
-import { PlaneCard } from '../../model/card.model'; // Import the plane card model
+import { PlaneCard } from '../../model/card.model';
 import axios from 'axios';
 import { decodeToken, JwtPayload } from '../../utils/jwt.utils';
 import { useEffect, useState } from 'react';
 import { userInfo } from '../../model/UserInfo';
 
 interface FlightCardProps {
-    flight: PlaneCard; // Define the flight prop with the PlaneCardModel type
+    flight: PlaneCard;
 }
 
 
@@ -31,6 +31,25 @@ const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
             })
         }
     })
+
+    const handleBookClick = () => {
+        const now = new Date();
+        const reqBody = {
+            flight: flight,
+            user: userData,
+            ReservationDate: now,
+            seat: "A43", //to define
+            status: "Schedulled", // what is it
+            payment: true,
+            price: flight.price
+        }
+        axios.post(`http://${import.meta.env.VITE_SERVER}/api/reservation/creatReservation`)
+            .then(response => {
+                console.log("response", response)
+            }).catch(error => {
+                console.error("Error", error)
+            })
+    }
 
     return (
         <>
