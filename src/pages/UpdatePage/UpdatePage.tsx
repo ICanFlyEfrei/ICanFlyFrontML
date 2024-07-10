@@ -4,14 +4,8 @@ import { FlightCardUpdate} from "../../components/FlightCard/FlightCardUpdate"
 import PlaneData from "../../data/companiesDetail.json";
 import DatePicker from "react-datepicker"   ;
 import "react-datepicker/dist/react-datepicker.css";
-import Select from 'react-select';
-import axios from 'axios'
+import axiosInstance from "../../utils/axiosInstance.utils";
 
-interface PlaneOption {
-    value: string;
-    label: string;
-
-}
 
 function generateFakePlaneCard(): PlaneCardUpdate {
     const planeCard: PlaneCardUpdate = {
@@ -24,7 +18,7 @@ function generateFakePlaneCard(): PlaneCardUpdate {
         price: 500,
         segmentEquipmentDescription: "Boeing 747",
         numberOfSeats: 250,
-        status: "Schedulled"
+        status: "Scheduled"
 
     };
 
@@ -38,20 +32,26 @@ const fakePlaneCard: PlaneCardUpdate = generateFakePlaneCard();
 export const UpdatePage = ():JSX.Element => {
 
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
+    const [selectedDepartureName, setSelectedDepartureName] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
+    const [selectedDestinationName, setSelectedDestinationName] = useState<string>("");
+
 
     const [startDate, setStartDate] = useState(new Date());
     const [startTime, setStartTime] = useState(new String());
-    const [flight, setFlight] = useState<PlaneCardUpdate>();
+    const [flight, setFlight] = useState<PlaneCardUpdate[]>();
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        const valueAsNumber = Number(value);
         if (name === "departure") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDeparture(value);
-            console.log("Selected Departure:", value);
+            setSelectedDepartureName(airportname)
         } else if (name === "destination") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDestination(value);
-            console.log("Selected Destination:", value);
+            setSelectedDestinationName(airportname)
         }
     };
 
@@ -61,18 +61,13 @@ export const UpdatePage = ():JSX.Element => {
     }
 
     const handleButtonClick = () => {
-        startDate.setHours(Number(startTime.substr(0,2)))
-        startDate.setMinutes(Number(startTime.substr(3,2)))
+        startDate.setUTCHours(Number(startTime.substr(0,2)))
+        startDate.setUTCMinutes(Number(startTime.substr(3,2)))
 
-        const queryBody = {
-            startingAirport: selectedDeparture,
-            destinationAirport: selectedDestination,
-            departureDate: startDate,
-        }
-        axios.get(`https://${import.meta.env.VITE_SERVER}/api/flight/find`, {params: queryBody})
+        axiosInstance.get(`/flight?startingAirport=${encodeURI(selectedDepartureName)}&destinationAirport=${encodeURI(selectedDestinationName)}&departureTime=${startDate.toISOString()}`)
             .then(response => {
                 console.log(response.data)
-                // setFlight(response.data)
+                setFlight(response.data)
             }).catch(error => {
                 console.error(error)
             }

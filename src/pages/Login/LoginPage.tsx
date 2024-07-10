@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance.utils";
 
 export const LoginPage = () => {
     const [registerForm, setRegisterForm] = useState(false);
@@ -44,7 +44,7 @@ export const LoginPage = () => {
         event.preventDefault();
         if (registerForm) {
             console.log("try to register with:", { mail, password, userFirstname, userLastname, userPhoneNumber });
-            axios.post(`https://${import.meta.env.VITE_SERVER}/api/user/client`,{
+            axiosInstance.post(`https://${import.meta.env.VITE_SERVER}/api/user/client`,{
                 email:mail,
                 password,
                 firstName: userFirstname,
@@ -57,11 +57,12 @@ export const LoginPage = () => {
             })
         } else {
             console.log("try to login with:", { email:mail, password });
-            axios.post(`https://${import.meta.env.VITE_SERVER}/api/auth/login`, {
+            axiosInstance.post(`https://${import.meta.env.VITE_SERVER}/api/auth/login`, {
                 email:mail, password:password
             }).then(response => {
                 console.log('Response', response.data)
                 localStorage.setItem('accessToken', response.data.access_token)
+                localStorage.setItem('refreshToken', response.data.refresh_token)
             }).catch(error => {
                 console.error("Error", error)
             })

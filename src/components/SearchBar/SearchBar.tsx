@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
 import axios from 'axios'
+import axiosInstance, { setAuthToken } from '../../utils/axiosInstance.utils';
 
 interface PlaneOption {
     value: string;
@@ -106,7 +107,7 @@ export const SearchBar = (): JSX.Element => {
         queryParams.append('segmentsEquipmentDescription', selectedModel.length.toString());
 
         console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        axios.get(`http://${import.meta.env.VITE_SERVER}/api/price-model-api/predict?${queryParams.toString()}`)
+        axiosInstance.get(`/price-model-api/predict?${queryParams.toString()}`)
             .then(response => {
                 console.log('Response:', response.data);
                 setPricePrediction(response.data.prediction)
@@ -117,12 +118,13 @@ export const SearchBar = (): JSX.Element => {
             });
     };
 
-    const handleSendClick = () => {
-        startDate.setHours(Number(startTime.substr(0,2)))
-        startDate.setMinutes(Number(startTime.substr(3,2)))
+    const handleSendClick = async () => {
+        startDate.setUTCHours(Number(startTime.substr(0,2)))
+        startDate.setUTCMinutes(Number(startTime.substr(3,2)))
 
-        endDate.setHours(Number(endTime.substr(0,2)))
-        endDate.setMinutes(Number(endTime.substr(3,2)))
+        endDate.setUTCHours(Number(endTime.substr(0,2)))
+        endDate.setUTCMinutes(Number(endTime.substr(3,2)))
+        console.log(startDate.toString())
 
         const flightDetail =  {
             startingAirport: selectedDepartureName,
@@ -133,13 +135,13 @@ export const SearchBar = (): JSX.Element => {
             arrivalTime: endDate,
             price: pricePrediction
         }
-        console.log(flightDetail)
-        axios.post(`http://${import.meta.env.VITE_SERVER}/api/flight/createFlight`, flightDetail)
-            .then(response => {
-                console.log(response)
-            }).catch(error => {
-                console.error(error)
-            })
+
+        try {
+          const response = await axiosInstance.post('/flight/createFlight', flightDetail);
+          console.log(response);
+        } catch (error) {
+          console.error(error);
+        }
 
     }
 

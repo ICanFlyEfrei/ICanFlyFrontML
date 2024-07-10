@@ -4,7 +4,7 @@ import PlaneData from "../../data/companiesDetail.json";
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance.utils';
 
 
 interface FlightCardProps {
@@ -18,11 +18,16 @@ interface PlaneOption {
 
 export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
     const [isEditing, setIsEditing] = useState(false);
+
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
+    const [selectedDepartureName, setSelectedDepartureName] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
+    const [selectedDestinationName, setSelectedDestinationName] = useState<string>("");
     const [selectedCompany, setSelectedCompany] = useState<string>("");
+    const [selectedCompanyName, setSelectedCompanyName] = useState<string>("");
 
     const [selectedModel, setSelectedModel] = useState<string>("");
+    const [selectedModelName, setSelectedModelName] = useState<string>("");
     const [options, setOptions] = useState<PlaneOption[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
@@ -40,14 +45,21 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        const valueAsNumber = Number(value);
         if (name === "departure") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDeparture(value);
+            setSelectedDepartureName(airportname)
             console.log("Selected Departure:", value);
         } else if (name === "destination") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDestination(value);
+            setSelectedDestinationName(airportname)
             console.log("Selected Destination:", value);
         } else if (name === "companies"){
+            const companyname = Object.entries(PlaneData.companies).find(([company, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedCompany(value)
+            setSelectedCompanyName(companyname)
             console.log("Selected Company:", value);
         }
     };
@@ -66,6 +78,7 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
     const handleChange = (selectedOption: PlaneOption | null) => {
         if (selectedOption) {
             setSelectedModel(selectedOption.value);
+            setSelectedModelName(selectedOption.label);
         }
     };
 
@@ -94,31 +107,32 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
     }
 
     const HandleSaveButton = () => {
-        startDate.setHours(Number(startTime.substr(0,2)))
-        startDate.setMinutes(Number(startTime.substr(3,2)))
+        startDate.setUTCHours(Number(startTime.substr(0,2)))
+        startDate.setUTCMinutes(Number(startTime.substr(3,2)))
 
-        endDate.setHours(Number(endTime.substr(0,2)))
-        endDate.setMinutes(Number(endTime.substr(3,2)))
+        endDate.setUTCHours(Number(endTime.substr(0,2)))
+        endDate.setUTCMinutes(Number(endTime.substr(3,2)))
 
         const updatedFlight: PlaneCardUpdate = {
             flightNumber: flight.flightNumber,
             departureTime: startDate,
             arrivalTime: endDate,
-            startingAirport: selectedDeparture,
-            destinationAirport: selectedDestination,
-            segmentAirlineName: selectedCompany,
-            segmentEquipmentDescription: selectedModel,
+            startingAirport: selectedDepartureName,
+            destinationAirport: selectedDestinationName,
+            segmentAirlineName: selectedCompanyName,
+            segmentEquipmentDescription: selectedModelName,
             numberOfSeats: 150,
             price : flight.price,
             status: flight.status
         }
 
-        axios.patch(`http://${import.meta.env.VITE_SERVER}/api/flight/update`, updatedFlight)
+        axiosInstance.patch(`/flight/update`, updatedFlight)
             .then(response => {
                 console.log("response", response)
             }).catch(error => {
                 console.error(error)
             })
+        toggleEditMode()
     }
 
     return (
@@ -226,12 +240,21 @@ export const FlightCardUpdate = ({ flight }: FlightCardProps): JSX.Element => {
                             )}
                         </div>
                         <div className='justify-center items-center flex sm:row-span-1 row-start-3 col-span-1'>
-                            <button
-                                className="btn btn-square align-middle bg-white text-first flex flex-1 w-full max-w-48"
-                                onClick={toggleEditMode}
-                            >
-                                {isEditing ? 'save' : 'update'}
-                            </button>
+                            {isEditing ?
+                                    <button
+                                    className="btn btn-square align-middle bg-white text-first flex flex-1 w-full max-w-48"
+                                    onClick={HandleSaveButton}
+                                >
+                                   Save
+                                </button>
+                            :
+                                <button
+                                    className="btn btn-square align-middle bg-white text-first flex flex-1 w-full max-w-48"
+                                    onClick={toggleEditMode}
+                                >
+                                    Update
+                                </button>}
+
                         </div>
                         <div className='col-span1 sm:row-span-1 row-start-3 flex justify-center items-center'>
                             {/* {isEditing ? (

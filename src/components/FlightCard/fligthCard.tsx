@@ -1,8 +1,8 @@
 import { PlaneCard } from '../../model/card.model';
-import axios from 'axios';
 import { decodeToken, JwtPayload } from '../../utils/jwt.utils';
 import { useEffect, useState } from 'react';
 import { userInfo } from '../../model/UserInfo';
+import axiosInstance from '../../utils/axiosInstance.utils';
 
 interface FlightCardProps {
     flight: PlaneCard;
@@ -22,7 +22,7 @@ const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
 
     useEffect(() => {
         if (jwtUserData?.userId) {
-            axios.get(`http://${import.meta.env.VITE_SERVER}/api/user/find/${jwtUserData?.userId}`)
+            axiosInstance.get(`/user/find/${jwtUserData?.userId}`)
             .then(response => {
                 console.log('Response', response)
                 setUserData(response.data)
@@ -30,7 +30,7 @@ const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
                 console.error('Error', error)
             })
         }
-    })
+    }, [])
 
     const handleBookClick = () => {
         const now = new Date();
@@ -43,7 +43,8 @@ const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
             payment: true,
             price: flight.price
         }
-        axios.post(`http://${import.meta.env.VITE_SERVER}/api/reservation/creatReservation`)
+        console.log(reqBody)
+        axiosInstance.post(`/reservation/createReservation`, reqBody)
             .then(response => {
                 console.log("response", response)
             }).catch(error => {
@@ -66,7 +67,7 @@ const FlightCard = ({ flight }:FlightCardProps):JSX.Element => {
                             <p className="sm:text-2xl text-lg text-black font-bold">{flight.destinationAirport}</p>
                         </div>
                         <div className='justify-center items-center flex row-span-1 col-span-1'>
-                            <button className="btn btn-square align-middle bg-white text-first  flex flex-1 w-full max-w-48">Book</button>
+                            <button className="btn btn-square align-middle bg-white text-first  flex flex-1 w-full max-w-48" onClick={handleBookClick}>Book</button>
                         </div>
                         <div className='col-span1 row-span-1 flex justify-center items-center'>
                             <p className="text-2xl font-bold ml-5 text-white text-center justify-center">Price: {flight.price} €</p>
