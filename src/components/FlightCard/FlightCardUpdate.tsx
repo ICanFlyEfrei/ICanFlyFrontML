@@ -4,6 +4,8 @@ import PlaneData from "../../data/companiesDetail.json";
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axiosInstance from '../../utils/axiosInstance.utils';
+
 
 interface FlightCardProps {
     flight: PlaneCardUpdate;
@@ -16,44 +18,51 @@ interface PlaneOption {
 }
 
 export const FlightCardUpdate = ({ flight, editFunc }: FlightCardProps): JSX.Element => {
-    const [isEditing, setIsEditing] = useState(false);
+
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
+    const [selectedDepartureName, setSelectedDepartureName] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
-    const [selectedCompany, setSelectedCompany] = useState<string>(flight.airline || "");
+    const [selectedDestinationName, setSelectedDestinationName] = useState<string>("");
+    const [selectedCompany, setSelectedCompany] = useState<string>(flight.segmentAirlineName || "");
+    const [selectedCompanyName, setSelectedCompanyName] = useState<string>("");
 
     const [selectedModel, setSelectedModel] = useState<string>("");
+    const [selectedModelName, setSelectedModelName] = useState<string>("");
     const [options, setOptions] = useState<PlaneOption[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
 
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [startDate, setStartDate] = useState<Date>(new Date());
+    const [endDate, setEndDate] = useState<Date>(new Date());
     const [startTime, setStartTime] = useState<string>("");
     const [endTime, setEndTime] = useState<string>("");
 
     useEffect(() => {
-        if (flight.departureDate) {
-            setStartDate(new Date(flight.departureDate));
+        if (flight.departureTime) {
+            setStartDate(new Date(flight.departureTime));
         }
-        if (flight.arrivalDate) {
-            setEndDate(new Date(flight.arrivalDate));
+        if (flight.departureTime) {
+            setEndDate(new Date(flight.arrivalTime));
         }
-    }, [flight.departureDate, flight.arrivalDate]);
-
-    const toggleEditMode = () => {
-        setIsEditing(!isEditing);
-    };
+    }, [flight.departureTime, flight.arrivalTime]);
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        const valueAsNumber = Number(value);
         if (name === "departure") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDeparture(value);
+            setSelectedDepartureName(airportname)
             console.log("Selected Departure:", value);
         } else if (name === "destination") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDestination(value);
+            setSelectedDestinationName(airportname)
             console.log("Selected Destination:", value);
-        } else if (name === "companies") {
-            setSelectedCompany(value);
+        } else if (name === "companies"){
+            const companyname = Object.entries(PlaneData.companies).find(([company, val]) => val === valueAsNumber)?.[0] || "";
+            setSelectedCompany(value)
+            setSelectedCompanyName(companyname)
             console.log("Selected Company:", value);
         }
     };
@@ -72,6 +81,7 @@ export const FlightCardUpdate = ({ flight, editFunc }: FlightCardProps): JSX.Ele
     const handleChange = (selectedOption: PlaneOption | null) => {
         if (selectedOption) {
             setSelectedModel(selectedOption.value);
+            setSelectedModelName(selectedOption.label);
         }
     };
 
@@ -96,7 +106,36 @@ export const FlightCardUpdate = ({ flight, editFunc }: FlightCardProps): JSX.Ele
             setEndTime(value);
             console.log("End time set to:", value);
         }
-    };
+    }
+
+    const HandleSaveButton = () => {
+        startDate.setUTCHours(Number(startTime.substr(0,2)))
+        startDate.setUTCMinutes(Number(startTime.substr(3,2)))
+
+        endDate.setUTCHours(Number(endTime.substr(0,2)))
+        endDate.setUTCMinutes(Number(endTime.substr(3,2)))
+
+        const updatedFlight: PlaneCardUpdate = {
+            flightNumber: flight.flightNumber,
+            departureTime: startDate,
+            arrivalTime: endDate,
+            startingAirport: selectedDepartureName,
+            destinationAirport: selectedDestinationName,
+            segmentAirlineName: selectedCompanyName,
+            segmentEquipmentDescription: selectedModelName,
+            numberOfSeats: 150,
+            price : flight.price,
+            status: flight.status
+        }
+
+        axiosInstance.patch(`/flight/update`, updatedFlight)
+            .then(response => {
+                console.log("response", response)
+            }).catch(error => {
+                console.error(error)
+            })
+        editFunc(false)
+    }
 
     return (
         <>
@@ -109,7 +148,7 @@ export const FlightCardUpdate = ({ flight, editFunc }: FlightCardProps): JSX.Ele
                             onChange={onChange}
                             defaultValue="baba" // Définir la valeur par défaut ici
                         >
-                            <option value={flight.airline} >{flight.airline}</option>
+                            <option value={flight.segmentAirlineName} >{flight.segmentAirlineName}</option>
                             {Object.entries(PlaneData.companies).map(([company, value]) => (
                                 <option key={value} value={value}>
                                     {company}
@@ -135,7 +174,7 @@ export const FlightCardUpdate = ({ flight, editFunc }: FlightCardProps): JSX.Ele
                                     <DatePicker
                                         className="select bg-transparent border-b-2 border-black mr-3"
                                         selected={startDate}
-                                        onChange={(date: Date | null) => setStartDate(date)}
+                                        onChange={(date: Date) => setStartDate(date)}
                                     />
                                     <form className="max-w-[16rem] mx-auto grid grid-cols-2 gap-4 ">
                                         <div>
@@ -185,9 +224,9 @@ export const FlightCardUpdate = ({ flight, editFunc }: FlightCardProps): JSX.Ele
                         <div className='justify-center items-center flex xl:row-span-1 sm: row-start-3 col-span-1'>
                             <button
                                 className="btn btn-square align-middle bg-white text-first flex flex-1 w-full max-w-48"
-                                onClick={() => editFunc(false)}
+                                onClick={HandleSaveButton}
                             >
-                                Validate
+                                Save
                             </button>
                         </div>
                         <div className='col-span1 xl:row-span-1 row-start-3 flex justify-center items-center'>

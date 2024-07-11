@@ -4,26 +4,22 @@ import { CardUpdate } from '../../components/FlightCard/CardUpdate'
 import PlaneData from "../../data/companiesDetail.json";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Select from 'react-select';
-import axios from 'axios'
+import axiosInstance from "../../utils/axiosInstance.utils";
 
-interface PlaneOption {
-    value: string;
-    label: string;
-
-}
 
 function generateFakePlaneCard(): PlaneCardUpdate {
     const planeCard: PlaneCardUpdate = {
-        id: 1,
-        airline: "Delta",
-        departureDate: new Date('2024-07-01T10:00:00Z'),
-        arrivalDate: new Date('2024-07-01T14:00:00Z'),
-        departure: "New York",
-        arrival: "Paris",
-        destination: "France",
+        flightNumber: "1",
+        segmentAirlineName: "Air France",
+        departureTime: new Date('2024-07-01T10:00:00Z'),
+        arrivalTime: new Date('2024-07-01T14:00:00Z'),
+        startingAirport: "New York",
+        destinationAirport: "Paris",
         price: 500,
-        modelName: "Boeing 747"
+        segmentEquipmentDescription: "Boeing 747",
+        numberOfSeats: 250,
+        status: "Scheduled"
+
     };
 
     return planeCard;
@@ -36,63 +32,27 @@ const fakePlaneCard: PlaneCardUpdate = generateFakePlaneCard();
 export const UpdatePage = (): JSX.Element => {
 
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
+    const [selectedDepartureName, setSelectedDepartureName] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
-    const [selectedCompany, setSelectedCompany] = useState<string>("");
+    const [selectedDestinationName, setSelectedDestinationName] = useState<string>("");
 
-    const [selectedModel, setSelectedModel] = useState<string>("");
-    const [options, setOptions] = useState<PlaneOption[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [inputValue, setInputValue] = useState<string>('');
 
     const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
     const [startTime, setStartTime] = useState(new String());
-    const [endTime, setEndTime] = useState(new String());
-
-
-    const [prediction, setPrediction] = useState<number>(0)
+    const [flight, setFlight] = useState<PlaneCardUpdate[]>();
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        const valueAsNumber = Number(value);
         if (name === "departure") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDeparture(value);
-            console.log("Selected Departure:", value);
+            setSelectedDepartureName(airportname)
         } else if (name === "destination") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDestination(value);
-            console.log("Selected Destination:", value);
-        } else if (name === "companies") {
-            setSelectedCompany(value)
-            console.log("Selected Company:", value);
+            setSelectedDestinationName(airportname)
         }
-    };
-
-    const filterOptions = async (inputValue: string): Promise<PlaneOption[]> => {
-        const planes = PlaneData.planes;
-        const filteredOptions: PlaneOption[] = Object.keys(planes)
-            .filter(plane => plane.toLowerCase().includes(inputValue.toLowerCase()))
-            .map(plane => ({
-                value: plane,
-                label: plane
-            }));
-        return filteredOptions;
-    };
-
-    const handleChange = (selectedOption: PlaneOption | null) => {
-        if (selectedOption) {
-            setSelectedModel(selectedOption.value);
-        }
-    };
-
-    const handleInputChange = (inputValue: string) => {
-        setInputValue(inputValue);
-        loadOptions(inputValue);
-    };
-
-    const loadOptions = async (inputValue: string) => {
-        setLoading(true);
-        const filteredOptions = await filterOptions(inputValue);
-        setOptions(filteredOptions);
-        setLoading(false);
     };
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,25 +62,17 @@ export const UpdatePage = (): JSX.Element => {
     }
 
     const handleButtonClick = () => {
-        //implement new call to endpoint here
+        startDate.setUTCHours(Number(startTime.substr(0,2)))
+        startDate.setUTCMinutes(Number(startTime.substr(3,2)))
 
-        // const queryParams = new URLSearchParams();
-        // queryParams.append('weekday', startDate.getDay().toString());
-        // queryParams.append('startingAirport', selectedDeparture);
-        // queryParams.append('destinationAirport', selectedDestination);
-        // queryParams.append('segmentsAirlineName', selectedCompany);
-        // queryParams.append('segmentsEquipmentDescription', selectedModel.length.toString());
-
-        // console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        // axios.get(`http://localhost:5000/predict?${queryParams.toString()}`)
-        //     .then(response => {
-        //         console.log('Response:', response.data);
-        //         setPrediction(response.data.prediction)
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         // Handle error here
-        //     });
+        axiosInstance.get(`/flight?startingAirport=${encodeURI(selectedDepartureName)}&destinationAirport=${encodeURI(selectedDestinationName)}&departureTime=${startDate.toISOString()}`)
+            .then(response => {
+                console.log(response.data)
+                setFlight(response.data)
+            }).catch(error => {
+                console.error(error)
+            }
+        )
     };
 
 
@@ -139,23 +91,7 @@ export const UpdatePage = (): JSX.Element => {
                         <option value={value}>{airport}</option>
                     ))}
                 </select>
-                <select className="select" name="companies" onChange={onChange}>
-                    <option value={undefined} > choisissez une companie</option>
-                    {Object.entries(PlaneData.companies).map(([company, value]) => (
-                        <option value={value}>{company}</option>
-                    ))}
-                </select>
             </div>
-
-            <Select
-                options={options}
-                isLoading={loading}
-                onInputChange={handleInputChange}
-                onChange={handleChange}
-                inputValue={inputValue}
-                placeholder="Search for a plane model"
-                className="rounded-md w-3/4 mb-5"
-            />
 
             <div className="pl-11 mb-5">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Departure Date:</label>

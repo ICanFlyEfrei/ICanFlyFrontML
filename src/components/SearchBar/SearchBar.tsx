@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
 import axios from 'axios'
+import axiosInstance, { setAuthToken } from '../../utils/axiosInstance.utils';
 
 interface PlaneOption {
     value: string;
@@ -13,10 +14,14 @@ interface PlaneOption {
 export const SearchBar = (): JSX.Element => {
 
     const [selectedDeparture, setSelectedDeparture] = useState<string>("");
+    const [selectedDepartureName, setSelectedDepartureName] = useState<string>("");
     const [selectedDestination, setSelectedDestination] = useState<string>("");
+    const [selectedDestinationName, setSelectedDestinationName] = useState<string>("");
     const [selectedCompany, setSelectedCompany] = useState<string>("");
+    const [selectedCompanyName, setSelectedCompanyName] = useState<string>("");
 
     const [selectedModel, setSelectedModel] = useState<string>("");
+    const [selectedModelName, setSelectedModelName] = useState<string>("");
     const [options, setOptions] = useState<PlaneOption[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
@@ -26,19 +31,25 @@ export const SearchBar = (): JSX.Element => {
     const [startTime, setStartTime] = useState(new String());
     const [endTime, setEndTime] = useState(new String());
 
-
-    const [prediction, setPrediction] = useState<number>(0)
+    const [pricePrediction, setPricePrediction] = useState<number>(0)
 
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        const valueAsNumber = Number(value);
         if (name === "departure") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDeparture(value);
+            setSelectedDepartureName(airportname)
             console.log("Selected Departure:", value);
         } else if (name === "destination") {
+            const airportname = Object.entries(PlaneData.airports).find(([airport, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedDestination(value);
+            setSelectedDestinationName(airportname)
             console.log("Selected Destination:", value);
         } else if (name === "companies"){
+            const companyname = Object.entries(PlaneData.companies).find(([company, val]) => val === valueAsNumber)?.[0] || "";
             setSelectedCompany(value)
+            setSelectedCompanyName(companyname)
             console.log("Selected Company:", value);
         }
     };
@@ -57,6 +68,8 @@ export const SearchBar = (): JSX.Element => {
     const handleChange = (selectedOption: PlaneOption | null) => {
         if (selectedOption) {
             setSelectedModel(selectedOption.value);
+            setSelectedModelName(selectedOption.label);
+
         }
     };
 
@@ -77,6 +90,7 @@ export const SearchBar = (): JSX.Element => {
         if (name === "start-time"){
             setStartTime(value)
             console.log("Start time setted to :", value)
+            console.log("hours", (Number(value.substr(3,2))))
         }
         else if (name === "end-time"){
             setEndTime(value)
@@ -93,16 +107,43 @@ export const SearchBar = (): JSX.Element => {
         queryParams.append('segmentsEquipmentDescription', selectedModel.length.toString());
 
         console.log(`query : http://localhost:5000/predict?${queryParams.toString()}`)
-        axios.get(`http://localhost:5000/predict?${queryParams.toString()}`)
+        axiosInstance.get(`/price-model-api/predict?${queryParams.toString()}`)
             .then(response => {
                 console.log('Response:', response.data);
-                setPrediction(response.data.prediction)
+                setPricePrediction(response.data.prediction)
             })
             .catch(error => {
                 console.error('Error:', error);
                 // Handle error here
             });
     };
+
+    const handleSendClick = async () => {
+        startDate.setUTCHours(Number(startTime.substr(0,2)))
+        startDate.setUTCMinutes(Number(startTime.substr(3,2)))
+
+        endDate.setUTCHours(Number(endTime.substr(0,2)))
+        endDate.setUTCMinutes(Number(endTime.substr(3,2)))
+        console.log(startDate.toString())
+
+        const flightDetail =  {
+            startingAirport: selectedDepartureName,
+            destinationAirport: selectedDestinationName,
+            segmentAirlineName: selectedCompanyName,
+            segmentEquipmentDescription: selectedModelName,
+            departureTime: startDate,
+            arrivalTime: endDate,
+            price: pricePrediction
+        }
+
+        try {
+          const response = await axiosInstance.post('/flight/createFlight', flightDetail);
+          console.log(response);
+        } catch (error) {
+          console.error(error);
+        }
+
+    }
 
     return (
         <div className="flex flex-col items-center p-7"  >
@@ -175,9 +216,19 @@ export const SearchBar = (): JSX.Element => {
                 </div>
             </div>
 
-            <button className="btn mr-16 bg-first w-1/6" onClick={handleButtonClick}>Send Data</button>
+            <button className="btn mr-16 mb-5 bg-first w-1/6" onClick={handleButtonClick}>Predict price :</button>
 
-            <p>Prediction : {prediction}</p>
+            <div>
+                <input
+                    className="input mr-16 mb-5"
+                    type="number"
+                    name="prediction"
+                    value={Number(pricePrediction)}
+                    onChange={(e) => setPricePrediction(Number(e.target.value))}
+                />
+                <button className="btn bg-first mr-10" onClick={handleSendClick}>Create flight</button>
+            </div>
+
         </div>
     )
 }
